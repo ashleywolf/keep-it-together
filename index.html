@@ -407,20 +407,30 @@ async function detect(){
   // Expression detection
   if(bline){
     const diff=cmpArr(mouth,bline);
-    // Cap noise floor to prevent over-desensitizing
-    const nf=Math.min(nfloor,0.02);
-    const thresh=nf*1.2;
-    const norm=Math.max(0,(diff-thresh))/0.04;
+    const nf=Math.min(nfloor,0.025);
+    const thresh=nf*1.5;
+    const norm=Math.max(0,(diff-thresh))/0.07;
     const cl=Math.min(1,norm);
 
-    // Debug: show diff value (remove later)
+    // Debug: show diff value
     document.getElementById('round-label').textContent=
       'ROUND '+round+' | diff:'+diff.toFixed(4)+' nf:'+nf.toFixed(4)+' cl:'+cl.toFixed(2);
 
-    if(cl>0.03){
-      comp=Math.min(1,comp+cl*0.035);
+    // Grace period: ignore first 2 seconds after calibration
+    if(elapsed<2){
+      // Adapt baseline during grace period
+      for(let i=0;i<bline.length;i++) bline[i]=Math.round(bline[i]*0.9+mouth[i]*0.1);
+      return;
+    }
+
+    if(cl>0.08){
+      comp=Math.min(1,comp+cl*0.018);
     }else{
-      comp=Math.max(0,comp-0.005);
+      comp=Math.max(0,comp-0.006);
+      // Slowly adapt baseline when face is neutral
+      if(cl<0.03){
+        for(let i=0;i<bline.length;i++) bline[i]=Math.round(bline[i]*0.97+mouth[i]*0.03);
+      }
     }
 
     updateMeter();
