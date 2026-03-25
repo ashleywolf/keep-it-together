@@ -425,9 +425,9 @@ async function detect(){
     }
 
     if(cl>0.08){
-      comp=Math.min(1,comp+cl*0.015);
+      comp=Math.min(1,comp+cl*0.005);
     }else{
-      comp=Math.max(0,comp-0.02);
+      comp=Math.max(0,comp-0.025);
       // Adapt baseline toward current face when neutral
       if(cl<0.05){
         const rate=0.06;
