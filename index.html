@@ -161,8 +161,8 @@ canvas#raw{display:none}
 <video id="vid" playsinline></video>
 <canvas id="raw"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface/dist/blazeface.js"></script>
 <script>
 /* ════════════════════════════════════════
    KEEP IT TOGETHER
@@ -307,7 +307,15 @@ async function go(){
 
   sC=document.getElementById('shame-canvas');sX=sC.getContext('2d');
 
-  if(!mdl) mdl=await blazeface.load();
+  if(!mdl){
+    if(typeof blazeface==='undefined'){
+      alert('Face detection library failed to load. Try a hard refresh (Cmd+Shift+R).');
+      show('title');
+      document.getElementById('load').classList.remove('active');
+      return;
+    }
+    mdl=await blazeface.load();
+  }
   document.getElementById('load').classList.remove('active');
 
   // Reset
