@@ -229,6 +229,7 @@ function verdict(t){
 let mdl=null, vid, rC, rX, dC, dX, sC, sX;
 let state='title', comp=0, elapsed=0, t0=0;
 let bline=null, calBuf=[], nfloor=0;
+let recentBuf=[], RBUF=40; // sliding window of recent frames
 let round=1, lastPT=0, usedP=new Set(), detecting=false, raf=null;
 let ac=null;
 
@@ -424,12 +425,13 @@ async function detect(){
     }
 
     if(cl>0.08){
-      comp=Math.min(1,comp+cl*0.018);
+      comp=Math.min(1,comp+cl*0.015);
     }else{
-      comp=Math.max(0,comp-0.006);
-      // Slowly adapt baseline when face is neutral
-      if(cl<0.03){
-        for(let i=0;i<bline.length;i++) bline[i]=Math.round(bline[i]*0.97+mouth[i]*0.03);
+      comp=Math.max(0,comp-0.02);
+      // Adapt baseline toward current face when neutral
+      if(cl<0.05){
+        const rate=0.06;
+        for(let i=0;i<bline.length;i++) bline[i]=Math.round(bline[i]*(1-rate)+mouth[i]*rate);
       }
     }
 
