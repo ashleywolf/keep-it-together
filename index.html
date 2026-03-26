@@ -274,6 +274,7 @@ function sndRound(){bip(800,.08);setTimeout(()=>bip(1000,.08),80);}
 /* ── Init / Start ── */
 async function go(){
   if(!ac) ac=new AudioContext();
+  if(ac.state==='suspended') await ac.resume();
   show('game');
   document.getElementById('load').classList.add('active');
 
